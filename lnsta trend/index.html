@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Surprise</title>
+
+<style>
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:'Segoe UI',sans-serif;
+  text-align:center;
+  background:linear-gradient(-45deg,#ff758c,#ff7eb3,#ffb199,#ff0844);
+  background-size:400% 400%;
+  animation:gradientLove 12s ease infinite;
+}
+
+@keyframes gradientLove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.container{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:90%;
+  max-width:500px;
+}
+
+h1{
+  font-size:clamp(24px,5vw,38px);
+  color:black;
+}
+
+button{
+  padding:14px 22px;
+  font-size:clamp(16px,4vw,20px);
+  margin:10px;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+button:hover{ transform:scale(1.08); }
+
+#yes{ background:#28a745; color:white; }
+#no{ background:#dc3545; color:white; position:fixed; z-index:9999; }
+
+.option{
+  background:linear-gradient(45deg,#c65256,#fad0c4);
+  color:#fff;
+}
+
+video{ 
+  width:100%;
+  max-width:320px;
+  border-radius:20px; 
+}
+
+.hidden{ display:none; }
+
+/* floating hearts */
+.heart{
+  position:fixed;
+  bottom:-10px;
+  font-size:20px;
+  animation:float 6s linear infinite;
+  pointer-events:none;
+}
+@keyframes float{
+  0%{ transform:translateY(0); opacity:1 }
+  100%{ transform:translateY(-100vh); opacity:0 }
+}
+
+/* broken hearts */
+.broken{
+  position:fixed;
+  top:-20px;
+  font-size:22px;
+  animation:fall 5s linear infinite;
+  pointer-events:none;
+}
+@keyframes fall{
+  0%{ transform:translateY(0); opacity:1 }
+  100%{ transform:translateY(100vh); opacity:0 }
+}
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION PAGE -->
+<div class="container" id="questionPage">
+<h1>When you meet me, what do you feel? 💭</h1>
+
+<button class="option" onclick="answer('good')">Super Happy 😍</button>
+<button class="option" onclick="answer('bad')">Boring 😴</button><br>
+<button class="option" onclick="answer('good')">Excited 🤩</button>
+<button class="option" onclick="answer('bad')">Normal 🙂</button>
+</div>
+
+<!-- VALENTINE PAGE -->
+<div class="container hidden" id="page1">
+<h1 id="typing"></h1>
+<button id="yes">Yes 💖</button>
+<button id="no">No 😢</button>
+</div>
+
+<!-- SUCCESS PAGE -->
+<div class="container hidden" id="page2">
+<h1>Yayyyy ❤️</h1>
+<p>You made my day 😍</p>
+
+<video id="loveVideo">
+<source src="dudububu143.mp4" type="video/mp4">
+</video>
+
+<audio autoplay loop>
+<source src="music.mp3" type="audio/mp3">
+</audio>
+</div>
+
+<!-- SAD PAGE -->
+<div class="container hidden" id="page3">
+<h1>You broke my heart 💔</h1>
+<video autoplay muted>
+<source src="sad123.mp4" type="video/mp4">
+</video>
+</div>
+
+<script>
+
+// answer logic
+function answer(type){
+document.getElementById('questionPage').classList.add('hidden');
+
+if(type==='good'){
+document.getElementById('page1').classList.remove('hidden');
+startTyping();
+startHearts();
+}
+else{
+document.getElementById('page3').classList.remove('hidden');
+startBrokenHearts();
+}
+}
+
+// typing effect
+let text="Will you be my Valentine? 💕";
+let i=0;
+function startTyping(){
+function type(){
+if(i<text.length){
+document.getElementById("typing").innerHTML+=text.charAt(i);
+i++;
+setTimeout(type,60);
+}}
+type();
+}
+
+// NO button run around YES
+let noBtn=document.getElementById("no");
+let yesBtn=document.getElementById("yes");
+
+function moveNoButton(){
+
+let rect=yesBtn.getBoundingClientRect();
+let range=150;
+
+let x=rect.left+(Math.random()*range-range/2);
+let y=rect.top+(Math.random()*range-range/2);
+
+x=Math.max(10,Math.min(window.innerWidth-noBtn.offsetWidth-10,x));
+y=Math.max(10,Math.min(window.innerHeight-noBtn.offsetHeight-10,y));
+
+noBtn.style.left=x+"px";
+noBtn.style.top=y+"px";
+}
+
+noBtn.addEventListener("mouseenter",moveNoButton);
+noBtn.addEventListener("touchstart",moveNoButton);
+
+// YES click autoplay video
+document.getElementById("yes").onclick=()=>{
+document.getElementById("page1").classList.add("hidden");
+document.getElementById("page2").classList.remove("hidden");
+
+let v=document.getElementById("loveVideo");
+v.muted=true;
+v.play().catch(()=>{});
+};
+
+// floating hearts
+function startHearts(){
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="❤";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(Math.random()*20+10)+"px";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),6000);
+},300);
+}
+
+// broken hearts
+function startBrokenHearts(){
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.className="broken";
+heart.innerHTML="💔";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(Math.random()*25+15)+"px";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),5000);
+},300);
+}
+</script>
+
+</body>
+</html>
